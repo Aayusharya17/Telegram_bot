@@ -1,0 +1,9 @@
+.security-alert {
+background-color: #fff3cd;
+color: #856404;
+padding: 12px 15px;
+border-radius: 8px;
+margin-bottom: 15px;
+font-size: 14px;
+border-left: 4px solid #ffc107;
+}
