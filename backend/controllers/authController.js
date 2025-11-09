@@ -164,3 +164,30 @@ exports.verifyOTP = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.checkTelegramConnected = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        telegramConnected: false, 
+        message: 'User not found' 
+      });
+    }
+    
+    // Return ACTUAL telegramConnected status from database
+    res.json({
+      success: true,
+      telegramConnected: user.telegramConnected,
+      message: user.telegramConnected ? 'Telegram is connected' : 'Telegram not connected yet'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      telegramConnected: false, 
+      message: error.message 
+    });
+  }
+};

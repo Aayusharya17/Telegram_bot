@@ -1,0 +1,25 @@
+/* * @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}", // Include all React component files
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: "#2563eb", // Tailwind blue-600
+          dark: "#1d4ed8",    // blue-700
+          light: "#3b82f6",   // blue-500
+        },
+        accent: "#f97316", // orange-500
+      },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui"], // clean modern font
+      },
+      boxShadow: {
+        soft: "0 4px 20px rgba(0, 0, 0, 0.05)",
+      },
+    },
+  },
+  plugins: [],
+};
