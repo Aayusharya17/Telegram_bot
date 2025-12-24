@@ -25,15 +25,12 @@ const Home = () => {
   console.log(user);
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
 <nav className="fixed top-0 left-0 w-full z-10 bg-white border-b shadow-sm">
   <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
-    {/* Left - Logo */}
     <h1 className="text-2xl font-bold text-gray-800 font-serif tracking-tight select-none">
       Instagram
     </h1>
 
-    {/* Middle - Search bar (hidden on small screens) */}
     <div className="hidden sm:flex items-center bg-gray-100 px-3 py-1 rounded-full w-64 focus-within:ring-2 focus-within:ring-gray-300">
       <svg
         xmlns="http://www.w3.org/2000/svg"

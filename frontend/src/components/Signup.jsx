@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import signupimage from "../signupimage.png"
+
 
 const Signup = () => {
   const [checkingConnection, setCheckingConnection] = useState(false);
-  const [step, setStep] = useState("form"); // form, telegram, otp
+  const [step, setStep] = useState("form");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -90,31 +92,31 @@ const Signup = () => {
   };
 
   const checkTelegramConnection = async () => {
-  setCheckingConnection(true);
-  try {
-    const response = await axios.get(
-      'http://localhost:5000/api/auth/check-telegram',  // ✅ CORRECT ENDPOINT
-      getAxiosConfig()
-    );
-    setTelegramConnected(true);
-    if (response.data.success && response.data.telegramConnected) {
-      setMessage('✅ Telegram connected successfully!');
-    } else {
+    setCheckingConnection(true);
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/api/auth/check-telegram',
+        getAxiosConfig()
+      );
+      setTelegramConnected(true);
+      if (response.data.success && response.data.telegramConnected) {
+        setMessage(' Telegram connected successfully!');
+      } else {
+        setTelegramConnected(false);
+        setMessage(' Please send the code to the bot first: /start ' + verificationCode);
+      }
+    } catch (err) {
       setTelegramConnected(false);
-      setMessage('📌 Please send the code to the bot first: /start ' + verificationCode);
+      setMessage('Error checking Telegram connection. Please try again.');
+    } finally {
+      setCheckingConnection(false);
     }
-  } catch (err) {
-    setTelegramConnected(false);
-    setMessage('Error checking Telegram connection. Please try again.');
-  } finally {
-    setCheckingConnection(false);
-  }
-};
+  };
 
 
-    const handleSendOTP = async () => {
+  const handleSendOTP = async () => {
     if (!telegramConnected) {
-      setMessage('❌ Please connect Telegram first');
+      setMessage(' Please connect Telegram first');
       return;
     }
 
@@ -154,17 +156,33 @@ const Signup = () => {
     }
   };
 
-  // --- STEP 1: SIGNUP FORM ---
   if (step === "form") {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-          <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-[#f4f6ff] px-4">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+        
+        {/* LEFT IMAGE SECTION */}
+        <div className="h-full hidden md:flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
+          <img
+            src={signupimage} // put image in public folder
+            alt="Signup Illustration"
+            className="h-full w-full object-contain"
+          />
+        </div>
+
+        {/* RIGHT FORM SECTION */}
+        <div className="p-8 md:p-12 flex flex-col justify-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Create Account
           </h2>
+          <p className="text-gray-500 mb-6 text-sm">
+            Create your account to get started.
+          </p>
+
           <form onSubmit={handleSignupSubmit} className="space-y-5">
+            {/* Email */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
               <input
@@ -173,16 +191,17 @@ const Signup = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
               {errors.email && (
-                <span className="text-red-600 text-sm">{errors.email}</span>
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
               )}
             </div>
 
+            {/* Password */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
@@ -191,16 +210,17 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Minimum 6 characters"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
               {errors.password && (
-                <span className="text-red-600 text-sm">{errors.password}</span>
+                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
               )}
             </div>
 
+            {/* Confirm Password */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
               </label>
               <input
@@ -209,56 +229,59 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Re-enter password"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
               {errors.confirmPassword && (
-                <span className="text-red-600 text-sm">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.confirmPassword}
-                </span>
+                </p>
               )}
             </div>
 
+            {/* Submit Error */}
             {errors.submit && (
               <div className="text-red-600 text-sm bg-red-100 border border-red-300 rounded-lg p-2">
                 {errors.submit}
               </div>
             )}
 
+            {/* Button */}
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 text-white font-semibold rounded-lg transition-colors ${
+              className={`w-full py-2 rounded-lg font-semibold text-white transition ${
                 loading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-indigo-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
               }`}
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
 
-          <p className="text-sm text-center text-gray-600 mt-4">
+          {/* Footer */}
+          <p className="text-sm text-gray-600 mt-6">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-indigo-600 hover:text-indigo-800 font-medium"
             >
-              Login here
+              Log In
             </Link>
           </p>
         </div>
       </div>
-    );
+    </div>
+  );
   }
 
-  // --- STEP 2: TELEGRAM CONNECT ---
   if (step === "telegram") {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            Connect Telegram 📱
+            Connect Telegram
           </h2>
           <p className="text-gray-600 mb-4">
             Secure your account by connecting Telegram
@@ -284,7 +307,7 @@ const Signup = () => {
                   {verificationCode}
                 </h2>
                 <p className="text-gray-600 mt-2">
-                  📌 Send this command to Telegram bot:
+                  Send this command to Telegram bot:
                 </p>
                 <code className="block bg-gray-100 rounded-lg py-1 px-2 text-sm text-gray-700">
                   /start {verificationCode}
@@ -294,13 +317,13 @@ const Signup = () => {
 
               {!telegramConnected && (
                 <div className="text-gray-600">
-                  <p>⏳ Waiting for Telegram connection...</p>
+                  <p> Waiting for Telegram connection...</p>
                   <p>After sending the code to the bot, click below</p>
                 </div>
               )}
 
 
-              <button 
+              <button
                 onClick={checkTelegramConnection}
                 disabled={checkingConnection}
                 className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition"
@@ -310,7 +333,7 @@ const Signup = () => {
 
 
               {telegramConnected && (
-                <button 
+                <button
                   onClick={handleSendOTP}
                   disabled={!telegramConnected}
                   className="submit-btn"
@@ -333,13 +356,12 @@ const Signup = () => {
     );
   }
 
-  // --- STEP 3: OTP VERIFY ---
   if (step === "otp") {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            Verify OTP ✅
+            Verify OTP
           </h2>
           <p className="text-gray-600 mb-3">
             Check your Telegram for the OTP code

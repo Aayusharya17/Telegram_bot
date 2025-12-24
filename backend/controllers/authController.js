@@ -1,33 +1,28 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Generate JWT token
+
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
 };
 
-// Generate random 6-digit code
 const generateCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// ================= SIGNUP =================
 exports.signup = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already registered' });
     }
 
-    // Create new user
     const user = await User.create({ email, password });
 
-    // Generate token
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -40,24 +35,20 @@ exports.signup = async (req, res) => {
   }
 };
 
-// ================= LOGIN =================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      // 🚨 Send Telegram alert on failed login
       if (user.telegramConnected && user.telegramId) {
         const { sendTelegramMessage } = require('../config/telegram');
-        const alertMessage = `🚨 SECURITY ALERT: Someone attempted to login to your account
+        const alertMessage = `SECURITY ALERT: Someone attempted to login to your account
 Time: ${new Date().toLocaleString()}
 If this wasn't you, please secure your account immediately.`;
 
@@ -85,7 +76,6 @@ If this wasn't you, please secure your account immediately.`;
   }
 };
 
-// ================= GET TELEGRAM CODE =================
 exports.getTelegramCode = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -103,7 +93,6 @@ exports.getTelegramCode = async (req, res) => {
   }
 };
 
-// ================= SEND OTP =================
 exports.sendOTP = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -114,7 +103,7 @@ exports.sendOTP = async (req, res) => {
     }
 
     const otp = generateCode();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     user.otp = { code: otp, expiresAt };
     await user.save();
@@ -134,7 +123,6 @@ exports.sendOTP = async (req, res) => {
   }
 };
 
-// ================= VERIFY OTP =================
 exports.verifyOTP = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -177,7 +165,6 @@ exports.checkTelegramConnected = async (req, res) => {
       });
     }
     
-    // Return ACTUAL telegramConnected status from database
     res.json({
       success: true,
       telegramConnected: user.telegramConnected,

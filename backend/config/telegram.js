@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const User = require('../models/User');
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
-// Listen for /start command with verification code
+
 bot.onText(/\/start (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const verificationCode = match[1];
@@ -22,7 +22,7 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
         bot.sendMessage(chatId, 'An error occurred. Please try again.');
     }
 });
-// Handle /help command
+
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
@@ -33,7 +33,6 @@ bot.on('message', (msg) => {
         );
     }
 });
-// Function to send message to user
 const sendTelegramMessage = async (chatId, message) => {
     try {
         await bot.sendMessage(chatId, message);
